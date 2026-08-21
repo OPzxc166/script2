@@ -286,7 +286,6 @@ local function makeDraggable(dragHandle, target)
 end
 
 makeDraggable(topBar, mainFrame)
-makeDraggable(miniBtn, miniBtn)
 
 -- 最小化 / 还原
 minimizeBtn.MouseButton1Click:Connect(function()

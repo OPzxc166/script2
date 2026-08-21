@@ -1,0 +1,305 @@
+-- 可拖拽 Roblox UI 框架（含最小化/关闭功能 + 左侧图标导航栏，纯图标+可滚动）
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- 基础容器
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MainScriptUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = playerGui
+
+-- 主窗口（加宽以容纳侧边栏）
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 460, 0, 340)
+mainFrame.Position = UDim2.new(0.5, -230, 0.5, -170)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 6)
+mainCorner.Parent = mainFrame
+
+-- 顶部标题栏（拖拽用）
+local topBar = Instance.new("Frame")
+topBar.Name = "TopBar"
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+topBar.BorderSizePixel = 0
+topBar.ZIndex = 2
+topBar.Parent = mainFrame
+
+local topBarCorner = Instance.new("UICorner")
+topBarCorner.CornerRadius = UDim.new(0, 6)
+topBarCorner.Parent = topBar
+
+local topBarFix = Instance.new("Frame")
+topBarFix.Size = UDim2.new(1, 0, 0, 8)
+topBarFix.Position = UDim2.new(0, 0, 1, -8)
+topBarFix.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+topBarFix.BorderSizePixel = 0
+topBarFix.ZIndex = 1
+topBarFix.Parent = topBar
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, -65, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "脚本菜单"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.GothamBold
+title.TextSize = 13
+title.ZIndex = 2
+title.Parent = topBar
+
+-- 最小化按钮 "-"
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Name = "MinimizeButton"
+minimizeBtn.Size = UDim2.new(0, 22, 0, 22)
+minimizeBtn.Position = UDim2.new(1, -56, 0, 4)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 16
+minimizeBtn.ZIndex = 2
+minimizeBtn.Parent = topBar
+
+local minBtnCorner = Instance.new("UICorner")
+minBtnCorner.CornerRadius = UDim.new(0, 5)
+minBtnCorner.Parent = minimizeBtn
+
+-- 关闭按钮 "x"
+local closeBtn = Instance.new("TextButton")
+closeBtn.Name = "CloseButton"
+closeBtn.Size = UDim2.new(0, 22, 0, 22)
+closeBtn.Position = UDim2.new(1, -28, 0, 4)
+closeBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+closeBtn.Text = "x"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+closeBtn.ZIndex = 2
+closeBtn.Parent = topBar
+
+local closeBtnCorner = Instance.new("UICorner")
+closeBtnCorner.CornerRadius = UDim.new(0, 5)
+closeBtnCorner.Parent = closeBtn
+
+-- ===== 左侧图标导航栏（改为 ScrollingFrame，可滚动、不会凸出、不影响右侧内容区） =====
+local sideBar = Instance.new("ScrollingFrame")
+sideBar.Name = "SideBar"
+sideBar.Size = UDim2.new(0, 70, 1, -30)
+sideBar.Position = UDim2.new(0, 0, 0, 30)
+sideBar.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+sideBar.BorderSizePixel = 0
+sideBar.ClipsDescendants = true
+sideBar.ScrollBarThickness = 4
+sideBar.ScrollingDirection = Enum.ScrollingDirection.Y
+sideBar.CanvasSize = UDim2.new(0, 0, 0, 0)
+sideBar.AutomaticCanvasSize = Enum.AutomaticSize.Y
+sideBar.ZIndex = 1
+sideBar.Parent = mainFrame
+
+local sideLayout = Instance.new("UIListLayout")
+sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
+sideLayout.Padding = UDim.new(0, 4)
+sideLayout.Parent = sideBar
+
+local sidePad = Instance.new("UIPadding")
+sidePad.PaddingTop = UDim.new(0, 6)
+sidePad.Parent = sideBar
+
+-- 右侧内容容器
+local contentArea = Instance.new("Frame")
+contentArea.Name = "ContentArea"
+contentArea.Size = UDim2.new(1, -70, 1, -30)
+contentArea.Position = UDim2.new(0, 70, 0, 30)
+contentArea.BackgroundTransparency = 1
+contentArea.ClipsDescendants = true
+contentArea.Parent = mainFrame
+
+-- 每个 Tab 对应一个页面 Frame
+local function createTabPage(name)
+    local page = Instance.new("ScrollingFrame")
+    page.Name = name
+    page.Size = UDim2.new(1, 0, 1, 0)
+    page.BackgroundTransparency = 1
+    page.BorderSizePixel = 0
+    page.ScrollBarThickness = 4
+    page.CanvasSize = UDim2.new(0, 0, 0, 0)
+    page.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    page.Visible = false
+    page.Parent = contentArea
+
+    local layout = Instance.new("UIListLayout")
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 8)
+    layout.Parent = page
+
+    local pad = Instance.new("UIPadding")
+    pad.PaddingTop = UDim.new(0, 10)
+    pad.PaddingLeft = UDim.new(0, 12)
+    pad.PaddingRight = UDim.new(0, 12)
+    pad.Parent = page
+
+    return page
+end
+
+-- 在某个 Tab 页面里加一行"文件夹式"条目（图标+文字）
+local function addEntry(page, iconText, labelText)
+    local entry = Instance.new("TextButton")
+    entry.Size = UDim2.new(1, 0, 0, 32)
+    entry.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+    entry.AutoButtonColor = true
+    entry.Text = ""
+    entry.Parent = page
+
+    local entryCorner = Instance.new("UICorner")
+    entryCorner.CornerRadius = UDim.new(0, 5)
+    entryCorner.Parent = entry
+
+    local icon = Instance.new("TextLabel")
+    icon.Size = UDim2.new(0, 24, 0, 24)
+    icon.Position = UDim2.new(0, 6, 0.5, -12)
+    icon.BackgroundTransparency = 1
+    icon.Text = iconText
+    icon.TextColor3 = Color3.fromRGB(0, 200, 200)
+    icon.Font = Enum.Font.GothamBold
+    icon.TextSize = 16
+    icon.Parent = entry
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -40, 1, 0)
+    label.Position = UDim2.new(0, 36, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(200, 240, 240)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 13
+    label.Parent = entry
+
+    return entry
+end
+
+-- 定义 Tab 列表
+local tabNames = {"信息", "本地玩家", "通用", "旋转与范围", "传送与甩飞", "自动说话", "时间", "透视"}
+local tabButtons = {}
+local tabPages = {}
+
+local function selectTab(name)
+    for n, page in pairs(tabPages) do
+        page.Visible = (n == name)
+    end
+    for n, btn in pairs(tabButtons) do
+        if n == name then
+            btn.BackgroundColor3 = Color3.fromRGB(230, 126, 34)
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        end
+    end
+end
+
+for i, name in ipairs(tabNames) do
+    local btn = Instance.new("TextButton")
+    btn.Name = name .. "Tab"
+    btn.Size = UDim2.new(0, 58, 0, 46)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Text = ""
+    btn.AutoButtonColor = true
+    btn.LayoutOrder = i
+    btn.Parent = sideBar
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = btn
+
+    local page = createTabPage(name)
+
+    tabButtons[name] = btn
+    tabPages[name] = page
+
+    btn.MouseButton1Click:Connect(function()
+        selectTab(name)
+    end)
+end
+
+selectTab(tabNames[1])
+
+-- 最小化后的小方块
+local miniBtn = Instance.new("TextButton")
+miniBtn.Name = "MiniIcon"
+miniBtn.Size = UDim2.new(0, 44, 0, 44)
+miniBtn.Position = UDim2.new(1, -60, 1, -60)
+miniBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+miniBtn.Text = "i"
+miniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+miniBtn.Font = Enum.Font.GothamBold
+miniBtn.TextSize = 20
+miniBtn.Visible = false
+miniBtn.Active = true
+miniBtn.Parent = screenGui
+
+local miniCorner = Instance.new("UICorner")
+miniCorner.CornerRadius = UDim.new(1, 0)
+miniCorner.Parent = miniBtn
+
+-- 拖拽逻辑
+local UserInputService = game:GetService("UserInputService")
+
+local function makeDraggable(dragHandle, target)
+    local dragging = false
+    local dragStart, startPos
+
+    dragHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = target.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            target.Position = UDim2.new(
+                startPos.X.Scale, startPos.X.Offset + delta.X,
+                startPos.Y.Scale, startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+makeDraggable(topBar, mainFrame)
+
+-- 最小化 / 还原
+minimizeBtn.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    miniBtn.Visible = true
+end)
+
+miniBtn.MouseButton1Click:Connect(function()
+    miniBtn.Visible = false
+    mainFrame.Visible = true
+end)
+
+-- 关闭（清除整个界面）
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)

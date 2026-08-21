@@ -234,6 +234,23 @@ end
 
 selectTab(tabNames[1])
 
+-- ===== 传送与甩飞：核弹室传送 =====
+local teleportPage = tabPages["传送与甩飞"]
+
+local warheadEntry = addEntry(teleportPage, "🚀", "核弹室")
+
+warheadEntry.MouseButton1Click:Connect(function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    local targetPart = game:GetService("Workspace")
+        ["Heavy Containment Zone"].WarheadNonModular.Room.Collidables.InvisCollisions.Floor.InvisCollision
+
+    if targetPart then
+        hrp.CFrame = targetPart.CFrame + Vector3.new(0, 5, 0)
+    end
+end)
+
 -- 最小化后的小方块
 local miniBtn = Instance.new("TextButton")
 miniBtn.Name = "MiniIcon"

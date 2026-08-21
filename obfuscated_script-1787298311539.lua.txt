@@ -222,15 +222,10 @@ for i, name in ipairs(tabNames) do
     btnCorner.CornerRadius = UDim.new(0, 6)
     btnCorner.Parent = btn
 
-    local page = createTabPage(name)
-
-    -- 示例条目，实际使用时替换成你自己的功能项
-    addEntry(page, "📁", name .. " 示例选项 1")
-    addEntry(page, "📁", name .. " 示例选项 2")
+local page = createTabPage(name)
 
     tabButtons[name] = btn
     tabPages[name] = page
-
     btn.MouseButton1Click:Connect(function()
         selectTab(name)
     end)

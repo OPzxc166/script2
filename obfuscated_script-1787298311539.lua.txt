@@ -1,4 +1,4 @@
--- 可拖拽 Roblox UI 框架（含最小化/关闭功能）
+-- 可拖拽 Roblox UI 框架（含最小化/关闭功能 + 左侧图标导航栏）
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -11,11 +11,11 @@ screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = playerGui
 
--- 主窗口
+-- 主窗口（加宽以容纳侧边栏）
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 300, 0, 340)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -170)
+mainFrame.Size = UDim2.new(0, 460, 0, 340)
+mainFrame.Position = UDim2.new(0.5, -230, 0.5, -170)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -31,6 +31,7 @@ topBar.Name = "TopBar"
 topBar.Size = UDim2.new(1, 0, 0, 30)
 topBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 topBar.BorderSizePixel = 0
+topBar.ZIndex = 2
 topBar.Parent = mainFrame
 
 local topBarCorner = Instance.new("UICorner")
@@ -42,7 +43,7 @@ topBarFix.Size = UDim2.new(1, 0, 0, 8)
 topBarFix.Position = UDim2.new(0, 0, 1, -8)
 topBarFix.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 topBarFix.BorderSizePixel = 0
-topBarFix.ZIndex = 0
+topBarFix.ZIndex = 1
 topBarFix.Parent = topBar
 
 local title = Instance.new("TextLabel")
@@ -55,6 +56,7 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Font = Enum.Font.GothamBold
 title.TextSize = 13
+title.ZIndex = 2
 title.Parent = topBar
 
 -- 最小化按钮 "-"
@@ -67,6 +69,7 @@ minimizeBtn.Text = "-"
 minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimizeBtn.Font = Enum.Font.GothamBold
 minimizeBtn.TextSize = 16
+minimizeBtn.ZIndex = 2
 minimizeBtn.Parent = topBar
 
 local minBtnCorner = Instance.new("UICorner")
@@ -83,19 +86,153 @@ closeBtn.Text = "x"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 14
+closeBtn.ZIndex = 2
 closeBtn.Parent = topBar
 
 local closeBtnCorner = Instance.new("UICorner")
 closeBtnCorner.CornerRadius = UDim.new(0, 5)
 closeBtnCorner.Parent = closeBtn
 
--- 内容区域（占位，可自行添加按钮列表）
-local contentFrame = Instance.new("Frame")
-contentFrame.Name = "Content"
-contentFrame.Size = UDim2.new(1, 0, 1, -30)
-contentFrame.Position = UDim2.new(0, 0, 0, 30)
-contentFrame.BackgroundTransparency = 1
-contentFrame.Parent = mainFrame
+-- ===== 左侧图标导航栏 =====
+local sideBar = Instance.new("Frame")
+sideBar.Name = "SideBar"
+sideBar.Size = UDim2.new(0, 70, 1, -30)
+sideBar.Position = UDim2.new(0, 0, 0, 30)
+sideBar.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+sideBar.BorderSizePixel = 0
+sideBar.Parent = mainFrame
+
+local sideLayout = Instance.new("UIListLayout")
+sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
+sideLayout.Padding = UDim.new(0, 4)
+sideLayout.Parent = sideBar
+
+local sidePad = Instance.new("UIPadding")
+sidePad.PaddingTop = UDim.new(0, 6)
+sidePad.Parent = sideBar
+
+-- 右侧内容容器（切换 Tab 内容用）
+local contentArea = Instance.new("Frame")
+contentArea.Name = "ContentArea"
+contentArea.Size = UDim2.new(1, -70, 1, -30)
+contentArea.Position = UDim2.new(0, 70, 0, 30)
+contentArea.BackgroundTransparency = 1
+contentArea.Parent = mainFrame
+
+-- 每个 Tab 对应一个页面 Frame（放 ScrollingFrame 方便放子项）
+local function createTabPage(name)
+    local page = Instance.new("ScrollingFrame")
+    page.Name = name
+    page.Size = UDim2.new(1, 0, 1, 0)
+    page.BackgroundTransparency = 1
+    page.BorderSizePixel = 0
+    page.ScrollBarThickness = 4
+    page.CanvasSize = UDim2.new(0, 0, 0, 0)
+    page.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    page.Visible = false
+    page.Parent = contentArea
+
+    local layout = Instance.new("UIListLayout")
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Padding = UDim.new(0, 8)
+    layout.Parent = page
+
+    local pad = Instance.new("UIPadding")
+    pad.PaddingTop = UDim.new(0, 10)
+    pad.PaddingLeft = UDim.new(0, 12)
+    pad.PaddingRight = UDim.new(0, 12)
+    pad.Parent = page
+
+    return page
+end
+
+-- 在某个 Tab 页面里加一行“文件夹式”条目（图标+文字），对应截图里 游戏设置/修改时间/指令 等
+local function addEntry(page, iconText, labelText)
+    local entry = Instance.new("TextButton")
+    entry.Size = UDim2.new(1, 0, 0, 32)
+    entry.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+    entry.AutoButtonColor = true
+    entry.Text = ""
+    entry.Parent = page
+
+    local entryCorner = Instance.new("UICorner")
+    entryCorner.CornerRadius = UDim.new(0, 5)
+    entryCorner.Parent = entry
+
+    local icon = Instance.new("TextLabel")
+    icon.Size = UDim2.new(0, 24, 0, 24)
+    icon.Position = UDim2.new(0, 6, 0.5, -12)
+    icon.BackgroundTransparency = 1
+    icon.Text = iconText
+    icon.TextColor3 = Color3.fromRGB(0, 200, 200)
+    icon.Font = Enum.Font.GothamBold
+    icon.TextSize = 16
+    icon.Parent = entry
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -40, 1, 0)
+    label.Position = UDim2.new(0, 36, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(200, 240, 240)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 13
+    label.Parent = entry
+
+    return entry
+end
+
+-- 定义 Tab 列表（名字自行替换成你需要的功能分类）
+local tabNames = {"信息", "本地玩家", "通用", "旋转与范围", "传送与甩飞", "自动说话", "时间", "透视"}
+local tabButtons = {}
+local tabPages = {}
+
+local function selectTab(name)
+    for n, page in pairs(tabPages) do
+        page.Visible = (n == name)
+    end
+    for n, btn in pairs(tabButtons) do
+        if n == name then
+            btn.BackgroundColor3 = Color3.fromRGB(230, 126, 34)
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        end
+    end
+end
+
+for i, name in ipairs(tabNames) do
+    local btn = Instance.new("TextButton")
+    btn.Name = name .. "Tab"
+    btn.Size = UDim2.new(0, 58, 0, 46)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Text = name
+    btn.TextWrapped = true
+    btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 11
+    btn.LayoutOrder = i
+    btn.Parent = sideBar
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = btn
+
+    local page = createTabPage(name)
+
+    -- 示例条目，实际使用时替换成你自己的功能项
+    addEntry(page, "📁", name .. " 示例选项 1")
+    addEntry(page, "📁", name .. " 示例选项 2")
+
+    tabButtons[name] = btn
+    tabPages[name] = page
+
+    btn.MouseButton1Click:Connect(function()
+        selectTab(name)
+    end)
+end
+
+selectTab(tabNames[1]) -- 默认打开第一个 Tab
 
 -- 最小化后的小方块
 local miniBtn = Instance.new("TextButton")

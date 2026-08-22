@@ -307,6 +307,22 @@ warheadEntry.MouseButton1Click:Connect(function()
     hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 end)
 
+local armoryEntry = addEntry(teleportPage, "🗄️", "武器库(外面)")
+
+armoryEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        ["Light Containment Zone"].Armory.Room.Collidables.InvisCollisions.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
 -- 最小化后的小方块
 local miniBtn = Instance.new("TextButton")
 miniBtn.Name = "MiniIcon"

@@ -213,7 +213,11 @@ for i, name in ipairs(tabNames) do
     btn.Name = name .. "Tab"
     btn.Size = UDim2.new(0, 58, 0, 46)
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    btn.Text = ""
+    btn.Text = name
+btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn.Font = Enum.Font.Gotham
+btn.TextSize = 11
+btn.TextWrapped = true
     btn.AutoButtonColor = true
     btn.LayoutOrder = i
     btn.Parent = sideBar

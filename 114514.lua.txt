@@ -191,7 +191,7 @@ local function addEntry(page, iconText, labelText)
 end
 
 -- 定义 Tab 列表
-local tabNames = {"传送与甩飞", "信息", "本地玩家", "通用", "旋转与范围", "自动说话", "时间", "透视"}
+local tabNames = {"传送", "信息", "本地玩家", "通用", "旋转与范围", "自动说话", "时间", "透视"}
 local tabButtons = {}
 local tabPages = {}
 
@@ -238,8 +238,8 @@ end
 
 selectTab(tabNames[1])
 
--- ===== 传送与甩飞：核弹室传送 =====
-local teleportPage = tabPages["传送与甩飞"]
+-- ===== 传送：核弹室传送 =====
+local teleportPage = tabPages["传送"]
 
 local warheadEntry = addEntry(teleportPage, "🚀", "核弹室")
 

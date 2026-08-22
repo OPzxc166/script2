@@ -288,11 +288,6 @@ antiFallEntry.MouseButton1Click:Connect(function()
     end
 end)
 
--- 提示文字：使用传送前先开启防坠落
-local tipEntry = addEntry(mainPage, "⚠️", "提示：使用传送前请先开启防坠落")
-tipEntry.Active = false
-tipEntry.AutoButtonColor = false
-
 -- ===== 传送：核弹室传送 =====
 local teleportPage = tabPages["传送"]
 

@@ -191,7 +191,7 @@ local function addEntry(page, iconText, labelText)
 end
 
 -- 定义 Tab 列表
-local tabNames = {"传送", "信息", "本地玩家", "通用", "旋转与范围", "自动说话", "时间", "透视"}
+local tabNames = {"主要", "传送", "本地玩家", "通用", "旋转与范围", "自动说话", "时间", "透视"}
 local tabButtons = {}
 local tabPages = {}
 

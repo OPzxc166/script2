@@ -238,6 +238,61 @@ end
 
 selectTab(tabNames[1])
 
+-- ===== 主要：防坠落开关 =====
+local mainPage = tabPages["主要"]
+
+local antiFallEntry = addEntry(mainPage, "🛡️", "防坠落：关闭")
+local antiFallEnabled = false
+local antiFallConnection = nil
+
+antiFallEntry.MouseButton1Click:Connect(function()
+    antiFallEnabled = not antiFallEnabled
+
+    if antiFallEnabled then
+        for _, child in ipairs(antiFallEntry:GetChildren()) do
+            if child:IsA("TextLabel") and child.Text:match("防坠落") then
+                child.Text = "防坠落：开启"
+            end
+        end
+
+        local character = player.Character or player.CharacterAdded:Wait()
+        local hrp = character:WaitForChild("HumanoidRootPart")
+
+        antiFallConnection = game:GetService("RunService").Stepped:Connect(function()
+            if hrp then
+                local rayOrigin = hrp.Position
+                local rayDirection = Vector3.new(0, -1000, 0)
+                local raycastParams = RaycastParams.new()
+                raycastParams.FilterDescendantsInstances = {character}
+                raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+                local result = game.Workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+                if not result or (hrp.Position.Y - result.Position.Y) > 50 then
+                    hrp.Velocity = Vector3.new(hrp.Velocity.X, 0, hrp.Velocity.Z)
+                    hrp.CFrame = hrp.CFrame - Vector3.new(0, hrp.Velocity.Y * 0.05, 0)
+                end
+            end
+        end)
+    else
+        for _, child in ipairs(antiFallEntry:GetChildren()) do
+            if child:IsA("TextLabel") and child.Text:match("防坠落") then
+                child.Text = "防坠落：关闭"
+            end
+        end
+
+        if antiFallConnection then
+            antiFallConnection:Disconnect()
+            antiFallConnection = nil
+        end
+    end
+end)
+
+-- 提示文字：使用传送前先开启防坠落
+local tipEntry = addEntry(mainPage, "⚠️", "提示：使用传送前请先开启防坠落")
+tipEntry.Active = false
+tipEntry.AutoButtonColor = false
+
 -- ===== 传送：核弹室传送 =====
 local teleportPage = tabPages["传送"]
 

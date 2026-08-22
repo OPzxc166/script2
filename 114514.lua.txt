@@ -250,8 +250,22 @@ warheadEntry.MouseButton1Click:Connect(function()
     local targetPart = game:GetService("Workspace")
         ["Heavy Containment Zone"].WarheadNonModular.Room.Collidables.InvisCollisions.Floor.InvisCollision
 
-    if targetPart then
-        hrp.CFrame = targetPart.CFrame + Vector3.new(0, 5, 0)
+    if not targetPart then return end
+
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+
+    hrp.CFrame = targetPart.CFrame + Vector3.new(0, 5, 0)
+
+    task.wait(0.3)
+
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = true
+        end
     end
 end)
 

@@ -299,29 +299,17 @@ local teleportPage = tabPages["传送"]
 local warheadEntry = addEntry(teleportPage, "🚀", "核弹室")
 
 warheadEntry.MouseButton1Click:Connect(function()
-    local character = player.Character or player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
-
-    local targetPart = game:GetService("Workspace")
+    local target = game:GetService("Workspace")
         ["Heavy Containment Zone"].WarheadNonModular.Room.Collidables.InvisCollisions.Floor.InvisCollision
 
-    if not targetPart then return end
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
 
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
-    end
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 
-    hrp.CFrame = targetPart.CFrame + Vector3.new(0, 5, 0)
+    task.wait(0.5)
 
-    task.wait(0.3)
-
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = true
-        end
-    end
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 end)
 
 -- 最小化后的小方块

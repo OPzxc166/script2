@@ -307,7 +307,7 @@ warheadEntry.MouseButton1Click:Connect(function()
     hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 end)
 
-local armoryEntry = addEntry(teleportPage, "🗄️", "武器库(外面)")
+local armoryEntry = addEntry(teleportPage, "🗄️", "武器库(里面)")
 
 armoryEntry.MouseButton1Click:Connect(function()
     local target = game:GetService("Workspace")

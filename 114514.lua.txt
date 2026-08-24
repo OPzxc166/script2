@@ -374,6 +374,40 @@ checkptBEntry.MouseButton1Click:Connect(function()
     hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 end)
 
+-- 广播室
+local intercomEntry = addEntry(teleportPage, "📻", "广播室")
+
+intercomEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        ["Entrance Zone"].Intercom.Room.Collidables.Downstairs.InvisCollisions.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
+-- 逃离设施
+local escapeEntry = addEntry(teleportPage, "🏃", "逃离设施")
+
+escapeEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
 -- 最小化后的小方块
 local miniBtn = Instance.new("TextButton")
 miniBtn.Name = "MiniIcon"

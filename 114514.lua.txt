@@ -409,27 +409,7 @@ escapeEntry.MouseButton1Click:Connect(function()
         .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
 
     local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
 
-    -- 传送前先关闭碰撞，避免卡进地板
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = false
-        end
-    end
-
-    hrp.CFrame = target.CFrame + Vector3.new(0, 5, 0)
-
-    task.wait(0.3)
-
-    hrp.CFrame = target.CFrame + Vector3.new(0, 5, 0)
-
-    task.wait(0.3)
-
-    -- 恢复碰撞
-    for _, part in ipairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = true
         end
     end
 end)

@@ -422,6 +422,8 @@ escapeEntry.MouseButton1Click:Connect(function()
             part.CanCollide = true
         end
     end
+local humanoid = character:WaitForChild("Humanoid")
+humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 end)
 
 -- 最小化后的小方块

@@ -323,6 +323,57 @@ armoryEntry.MouseButton1Click:Connect(function()
     hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
 end)
 
+-- 糖果屋
+local candyEntry = addEntry(teleportPage, "🍬", "糖果屋")
+
+candyEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        ["Light Containment Zone"]["330"].Room.Collidables.InvisCollisions.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
+-- 轻收A门
+local checkptAEntry = addEntry(teleportPage, "🚪", "轻收A门")
+
+checkptAEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        ["Light Containment Zone"].CheckptA.Chkpt.Collidables.InvisCollisions.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
+-- 轻收B门
+local checkptBEntry = addEntry(teleportPage, "🚪", "轻收B门")
+
+checkptBEntry.MouseButton1Click:Connect(function()
+    local target = game:GetService("Workspace")
+        ["Light Containment Zone"].CheckptB.Chkpt.Collidables.InvisCollisions.InvisCollision
+
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+
+    task.wait(0.5)
+
+    hrp.CFrame = target.CFrame + Vector3.new(0, 3, 0)
+end)
+
 -- 最小化后的小方块
 local miniBtn = Instance.new("TextButton")
 miniBtn.Name = "MiniIcon"

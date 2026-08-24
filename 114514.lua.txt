@@ -255,16 +255,6 @@ antiFallEntry.MouseButton1Click:Connect(function()
             end
         end
 
--- ===== 主要：核弹一键开合 =====
-local warheadButtonEntry = addEntry(mainPage, "🔘", "核弹一键开合(得在核附近)")
-
-warheadButtonEntry.MouseButton1Click:Connect(function()
-    local Event = workspace.Surface.Surface.GateA["Warhead Control Room"].Collidables.WarheadStand.ButtonInteractable.Interaction
-    Event:FireServer(
-        workspace.Surface.Surface.GateA["Warhead Control Room"].Collidables.WarheadStand.ButtonInteractable.Button
-    )
-end)
-
         local character = player.Character or player.CharacterAdded:Wait()
         local hrp = character:WaitForChild("HumanoidRootPart")
 
@@ -296,6 +286,16 @@ end)
             antiFallConnection = nil
         end
     end
+end)
+
+-- ===== 主要：核弹一键开合 =====
+local warheadButtonEntry = addEntry(mainPage, "🔘", "核弹一键开合(得在核附近)")
+
+warheadButtonEntry.MouseButton1Click:Connect(function()
+    local Event = workspace.Surface.Surface.GateA["Warhead Control Room"].Collidables.WarheadStand.ButtonInteractable.Interaction
+    Event:FireServer(
+        workspace.Surface.Surface.GateA["Warhead Control Room"].Collidables.WarheadStand.ButtonInteractable.Button
+    )
 end)
 
 -- ===== 传送：核弹室传送 =====

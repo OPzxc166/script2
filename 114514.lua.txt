@@ -409,14 +409,12 @@ escapeEntry.MouseButton1Click:Connect(function()
         .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
 
     local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
 
-    -- 传送到目标位置上方，避免卡进地板导致瘫倒
     character:PivotTo(target.CFrame + Vector3.new(0, 3, 0))
 
-    -- 强制恢复站立状态，防止瘫倒
-    humanoid.PlatformStand = false
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    task.wait(0.5)
+
+    character:PivotTo(target.CFrame + Vector3.new(0, 3, 0))
 end)
 
 -- 最小化后的小方块

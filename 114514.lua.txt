@@ -406,7 +406,7 @@ local escapeEntry = addEntry(teleportPage, "🏃", "逃离设施")
 
 escapeEntry.MouseButton1Click:Connect(function()
     local target = game:GetService("Workspace")
-        .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
+        .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Floor.InvisCollision
 
     local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
 

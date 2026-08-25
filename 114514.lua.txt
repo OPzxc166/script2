@@ -405,13 +405,18 @@ end)
 local escapeEntry = addEntry(teleportPage, "🏃", "逃离设施")
 
 escapeEntry.MouseButton1Click:Connect(function()
-    local target = game:GetService("Workspace").Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
+    local target = game:GetService("Workspace")
+        .Surface.Surface.GateB.Room.Collidables.InvisCollisions.Exit.Room.Floor.InvisCollision
+
     local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
     local humanoid = character:WaitForChild("Humanoid")
 
-    -- 传送到目标位置上方,避免卡进地板导致瘫倒
+    -- 传送到目标位置上方，避免卡进地板导致瘫倒
     character:PivotTo(target.CFrame + Vector3.new(0, 3, 0))
+
+    -- 强制恢复站立状态，防止瘫倒
+    humanoid.PlatformStand = false
+    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 end)
 
 -- 最小化后的小方块
